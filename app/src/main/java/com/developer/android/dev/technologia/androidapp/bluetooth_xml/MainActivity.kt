@@ -48,13 +48,36 @@ class MainActivity : AppCompatActivity() {
 
 
 
-        binding.btnDiscoverbility.setOnClickListener {
-
-        }
     }
 
     private fun discoverability() {
-        TODO("Not yet implemented")
+        when{
+            ContextCompat
+                .checkSelfPermission(
+                    this,
+                    android.Manifest.permission.BLUETOOTH_ADVERTISE
+                ) == PackageManager.PERMISSION_GRANTED ->{
+
+            }
+
+            shouldShowRequestPermissionRationale(
+                android.Manifest.permission.BLUETOOTH_ADVERTISE
+            )->{
+                ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.BLUETOOTH_ADVERTISE),101)
+            }
+
+        }
+
+
+        binding.btnDiscoverbility.setOnClickListener {
+            val discoverIntent = Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE)
+            discoverIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION,20)
+            startActivity(discoverIntent)
+
+            val intentFilter = IntentFilter(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED)
+            registerReceiver(discoverabilityReceiver,intentFilter)
+        }
+
     }
 
     @RequiresApi(Build.VERSION_CODES.S)
@@ -95,6 +118,7 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(receiver)
+        unregisterReceiver(discoverabilityReceiver)
     }
 
 }
