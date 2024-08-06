@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var bluetoothManager: BluetoothManager
     lateinit var bluetoothAdapter: BluetoothAdapter
     lateinit var receiver :BluetoothReceiver
+    lateinit var discoverabilityReceiver: Discoverability
 
     @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,14 +41,20 @@ class MainActivity : AppCompatActivity() {
         bluetoothAdapter = bluetoothManager.adapter
 
         enableDisableBT()
+        discoverability()
 
         receiver = BluetoothReceiver()
+        discoverabilityReceiver = Discoverability()
 
 
 
         binding.btnDiscoverbility.setOnClickListener {
 
         }
+    }
+
+    private fun discoverability() {
+        TODO("Not yet implemented")
     }
 
     @RequiresApi(Build.VERSION_CODES.S)
