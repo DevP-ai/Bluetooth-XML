@@ -8,6 +8,7 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -46,10 +47,34 @@ class MainActivity : AppCompatActivity() {
         receiver = BluetoothReceiver()
         discoverabilityReceiver = Discoverability()
 
+        binding.btnGetPairedDevices.setOnClickListener {
+            getPairedDevices()
+        }
 
 
     }
 
+    private fun getPairedDevices() {
+        if(ContextCompat.checkSelfPermission(this,android.Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(this,android.Manifest.permission.BLUETOOTH_ADMIN) == PackageManager.PERMISSION_GRANTED){
+
+            try {
+                var devices = bluetoothAdapter.bondedDevices
+                for(device in devices){
+                    Log.d("BTDevices","Device: ${device.name}, ${device.address},${device.uuids},${device.type}")
+                }
+            }catch (e:SecurityException){
+                Log.d("BTError","SecurityException: ${e.message}")
+
+            }
+        }else{
+            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.BLUETOOTH,android.Manifest.permission.BLUETOOTH_ADMIN),REQUEST_BLUETOOTH_PERMISSION)
+        }
+    }
+
+    companion object{
+        private const val REQUEST_BLUETOOTH_PERMISSION = 1
+    }
     private fun discoverability() {
         when{
             ContextCompat
@@ -113,7 +138,9 @@ class MainActivity : AppCompatActivity() {
                 registerReceiver(receiver,intentFilter)
             }
         }
+
     }
+
 
     override fun onDestroy() {
         super.onDestroy()
